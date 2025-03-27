@@ -1,0 +1,100 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!-- index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RoadSafe Nigeria - Federal Traffic Management System</title>
+    <style>
+        /* Common Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: #f8f9fa;
+        }
+
+        .main-header {
+            background: #2c3e50;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .logo {
+            height: 60px;
+            width: 60px;
+            margin-bottom: 1rem;
+        }
+
+        .portal-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        /* Navigation and Emergency Call */
+        .emergency-call {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #e74c3c;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 30px;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        .nav-button {
+            padding: 15px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            transition: transform 0.3s;
+        }
+
+        .driver-nav {
+            background: #3498db;
+            border: 2px solid #2980b9;
+        }
+
+        .admin-nav {
+            background: #e74c3c;
+            border: 2px solid #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <img src="nigerian-coat-of-arms.png" alt="Nigerian Coat of Arms" class="logo">
+        <h1>Federal Republic of Nigeria<br>Traffic Offence Management System</h1>
+    </header>
+
+    <div class="navigation-buttons">
+        <a href="driver.html" class="nav-button driver-nav">Driver Portal</a>
+        <a href="admin.html" class="nav-button admin-nav">Admin Portal</a>
+    </div>
+
+    <a href="tel:0700225537872" class="emergency-call">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white">
+            <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm3.445 17.827c-3.684 1.684-9.401-9.43-5.8-11.308l1.053-.519 1.746 3.409-1.042.513c-1.095.587 1.185 5.04 2.305 4.497l1.032-.505 1.76 3.397-1.054.516z"/>
+        </svg>
+        Emergency Call
+    </a>
+</body>
+</html>
