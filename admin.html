@@ -1,0 +1,322 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Portal - RoadSafe Nigeria</title>
+    <style>
+        /* Common Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .main-header {
+            background: #2c3e50;
+            color: white;
+            padding: 1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            height: 40px;
+            width: 40px;
+            filter: invert(1);
+        }
+
+        /* Navigation */
+        .main-nav {
+            background: #34495e;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .main-nav a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+        }
+
+        /* Admin Interface */
+        .form-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .form-section input, 
+        .form-section select {
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #2c3e50;
+            color: white;
+        }
+
+        .charts {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        /* Emergency Button */
+        .admin-emergency {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: #c0392b;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-content">
+            <img src="nigerian-coat-of-arms.png" alt="Government Logo" class="logo">
+            <h1>Federal Admin Portal</h1>
+        </div>
+    </header>
+
+    <nav class="main-nav">
+        <a href="index.html">Home</a>
+        <div>
+            <a href="driver.html">Driver Portal</a>
+            <a href="admin.html">Admin Portal</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="form-section">
+            <h2>Record New Offence</h2>
+            <input type="text" id="plate" placeholder="Vehicle Plate">
+            <select id="type">
+                <option value="Speeding">Speeding</option>
+                <option value="Red Light">Red Light Violation</option>
+                <option value="Parking">Illegal Parking</option>
+            </select>
+            <input type="date" id="date">
+            <input type="number" id="fine" placeholder="Fine Amount (₦)">
+            <button class="button" onclick="addOffence()">Add Offence</button>
+        </div>
+
+        <div class="table-section">
+            <table id="offences-table">
+                <thead>
+                    <tr>
+                        <th>Plate</th>
+                        <th>Offence</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div class="charts">
+            <div class="chart-container">
+                <canvas id="typeChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <canvas id="statusChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <a href="tel:0700225537872" class="admin-emergency">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white">
+            <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm0 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm-1 4h2v7h-2v-7zm1 11.25c-.69 0-1.25-.56-1.25-1.25s.56-1.25 1.25-1.25 1.25.56 1.25 1.25-.56 1.25-1.25 1.25z"/>
+        </svg>
+        Priority Support
+    </a>
+
+    <script>
+        // Initialize data
+        localStorage.getItem('offences') || localStorage.setItem('offences', JSON.stringify([]));
+        let offences = JSON.parse(localStorage.getItem('offences'));
+
+        // Table Functions
+        function renderTable() {
+            document.querySelector('#offences-table tbody').innerHTML = offences.map((o, i) => `
+                <tr>
+                    <td>${o.plate}</td>
+                    <td>${o.type}</td>
+                    <td>${o.date}</td>
+                    <td>₦${o.fine}</td>
+                    <td>${o.status}</td>
+                    <td><button onclick="deleteOffence(${i})">Delete</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function addOffence() {
+            const newOffence = {
+                plate: document.getElementById('plate').value,
+                type: document.getElementById('type').value,
+                date: document.getElementById('date').value,
+                fine: document.getElementById('fine').value,
+                status: 'Unpaid'
+            };
+            
+            offences.push(newOffence);
+            localStorage.setItem('offences', JSON.stringify(offences));
+            renderTable();
+            updateCharts();
+        }
+
+        function deleteOffence(index) {
+            offences.splice(index, 1);
+            localStorage.setItem('offences', JSON.stringify(offences));
+            renderTable();
+            updateCharts();
+        }
+
+        // Chart Functions
+        function updateCharts() {
+            // Type Chart
+            const typeData = offences.reduce((acc, o) => {
+                acc[o.type] = (acc[o.type] || 0) + 1;
+                return acc;
+            }, {});
+
+            new Chart(document.getElementById('typeChart'), {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(typeData),
+                    datasets: [{
+                        data: Object.values(typeData),
+                        backgroundColor: ['#ff6384', '#36a2eb', '#cc65fe']
+                    }]
+                }
+            });
+
+            // Status Chart
+            const statusData = offences.reduce((acc, o) => {
+                acc[o.status] = (acc[o.status] || 0) + 1;
+                return acc;
+            }, {});
+
+            new Chart(document.getElementById('statusChart'), {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(statusData),
+                    datasets: [{
+                        label: 'Offences by Status',
+                        data: Object.values(statusData),
+                        backgroundColor: '#4bc0c0'
+                    }]
+                }
+            });
+        }
+
+        // Initial Load
+        renderTable();
+        updateCharts();
+    </script>
+</body>
+</html><style>body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+}
+
+header {
+    background-color: #007bff;
+    color: white;
+    padding: 20px;
+}
+
+.logo {
+    width: 100px;
+    display: block;
+    margin: 0 auto;
+}
+
+.container {
+    margin: 50px auto;
+    padding: 20px;
+    max-width: 400px;
+    background: white;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+button {
+    background: #007bff;
+    color: white;
+    padding: 10px;
+    border: none;
+    margin: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+footer {
+    margin-top: 20px;
+    padding: 10px;
+    background: #222;
+    color: white;
+    text-align: center;
+    font-size: 14px;
+}
+</style>
